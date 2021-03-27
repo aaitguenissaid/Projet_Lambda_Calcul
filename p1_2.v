@@ -36,3 +36,36 @@ Compute cnot cfa.
 
 
 End type_booleen.
+Section type_nat.
+Variable T: Set.
+Definition compo : (T->T) -> (T->T) -> (T->T) :=
+fun g f => fun x => g (f x).
+
+Notation "g ° f" := (compo g f) (at level 10).
+Fixpoint iter (f:T->T) (n: nat) :=
+match n with
+| O => fun x => x
+| S p => f ° (iter f p)
+end.
+
+Definition cnat := (T->T) -> (T->T).
+
+Definition cnat_of : nat -> cnat := fun n => fun f => (iter f n).
+Notation "[ X ]N " := (cnat_of X) (at level 5).
+
+Definition test := [3]N.
+
+Definition c0: cnat := fun (f:T->T) (x:T) => x.
+Definition c1: cnat := fun (f:T->T) (x:T) => f x.
+Definition c2: cnat := fun (f:T->T) (x:T) => f (f x).
+Definition c3: cnat := fun (f:T->T) (x:T) => f (f (f x)).
+Definition cS:= fun (n:cnat)=> fun (f:T->T) (x:T)  => ( f (n f x )).
+Compute c2.
+Definition cadd := fun (n:cnat) (m:cnat) => fun (f:T->T) (x:T) =>  n f (m f x).
+Compute cadd c2 c2.
+Definition cmult := fun (n:cnat) (m:cnat) => fun (f:T->T)=>  n (m f).
+Compute cmult c2 c3.
+Definition cseq0 := fun (n:cnat)=> fun (x:T) (y:T)=> n (fun (z:T)=>y) x.
+Compute cseq0 c3.
+
+End type_nat.
