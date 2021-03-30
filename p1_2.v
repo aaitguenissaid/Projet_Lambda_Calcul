@@ -1,30 +1,21 @@
 Section type_booleen.
-
 Variable T : Set.
-
 Definition cbool := T -> T -> T.
-
-
 Definition ctr : cbool := fun x y => x.
 Print ctr.
 Definition cfa : cbool := fun x y => y.
 Print cfa.
-
 Definition cif :=
 fun (b : cbool) (t : T) (e : T) =>
 b t e.
-
 Variables F V : T.
-
 Compute cif ctr V F.
 Compute cif cfa V F.
-
 Definition cand := fun (a:cbool) (b:cbool) =>fun (x:T) (y:T) =>a (b x y) y.
 Compute cand ctr ctr.
 Compute cand ctr cfa.
 Compute cand cfa cfa.
 Compute cand cfa ctr.
-
 Definition cor := fun (a:cbool) (b:cbool) =>fun (x:T)(y:T)=>a x (b x y).
 Compute cor ctr ctr.
 Compute cor ctr cfa.
@@ -33,8 +24,6 @@ Compute cor cfa ctr.
 Definition cnot := fun (b:cbool) => fun (x:T) (y:T)=> b y x.
 Compute cnot ctr.
 Compute cnot cfa.
-
-
 End type_booleen.
 Section type_nat.
 Variable T: Set.
@@ -78,25 +67,47 @@ Definition nbtrue1 := fun b =>
 match b with true => 1 | false => 0 end.
 Compute nbtrue1 true.
 Compute nbtrue1 false.
-Definition pbool : Set := forall T: Set, T -> T -> T.
-Definition ptr : pbool := fun T:Set => fun (x:T) (y:T) => x.
-Definition pfa : pbool := fun T:Set => fun (x:T) (y:T) => y.
-Definition pnot: pbool -> pbool := fun b: pbool => fun (T:Set)=>fun (x:T)(y:T) => b T y x.
-Compute pnot ptr.
-Definition pnotv2: pbool -> pbool := fun b => fun T : Set => b(T->T->T)(fun x y => y)(fun x y => x).
-Compute pnot ptr.
-Definition conjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T (b T x y ) y.  
-Compute conjonction pfa pfa.
-Compute conjonction pfa ptr.
-Compute conjonction ptr pfa.
-Compute conjonction ptr ptr.
-Definition disjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T x (b T x y ).  
-Compute disjonction pfa pfa.
-Compute disjonction pfa ptr.
-Compute disjonction ptr pfa.
-Compute disjonction ptr ptr.
-Definition pbvn: pbool -> nat := fun b => b (nat) 3  5 .
-Compute pbvn ptr.
-Compute pbvn pfa.
-
 End type_de_identite_polymorphe.
+
+Section booleens_avec_typage_polymorphe.
+  Definition pbool : Set := forall T: Set, T -> T -> T.
+  Definition ptr : pbool := fun T:Set => fun (x:T) (y:T) => x.
+  Definition pfa : pbool := fun T:Set => fun (x:T) (y:T) => y.
+  Definition pnot: pbool -> pbool := fun b: pbool => fun (T:Set)=>fun (x:T)(y:T) => b T y x.
+  Compute pnot ptr.
+  Definition pnotv2: pbool -> pbool := fun b => fun T : Set => b(T->T->T)(fun x y => y)(fun x y => x).
+  Compute pnot ptr.
+  Definition conjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T (b T x y ) y.  
+  Compute conjonction pfa pfa.
+  Compute conjonction pfa ptr.
+  Compute conjonction ptr pfa.
+  Compute conjonction ptr ptr.
+  Definition disjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T x (b T x y ).  
+  Compute disjonction pfa pfa.
+  Compute disjonction pfa ptr.
+  Compute disjonction ptr pfa.
+  Compute disjonction ptr ptr.
+  Definition pbvn: pbool -> nat := fun b => b (nat) 3  5 .
+  Compute pbvn ptr.
+  Compute pbvn pfa.
+End booleens_avec_typage_polymorphe.
+
+Section structures_de_données_couples_et_choix.
+  Section couples.
+    Definition pprod_nb : Set := forall T: Set, (nat -> pbool -> T)->T.
+    Definition pcpl_nb:= fun (a:nat)(b:pbool) =>fun T:Set => fun (k:nat -> pbool -> T) =>k a b.
+    Definition pprod_bn : Set := forall T: Set, (pbool -> nat -> T)->T.
+    Definition pcpl_bn:= fun (a:pbool)(b:nat) =>fun T:Set => fun (k:pbool -> nat ->  T)=>k a b.
+    Definition pprod_nb_to_bn := fun (z:pprod_nb)=>fun T:Set => fun (k:pbool -> nat -> T) =>
+      k  ((fun (q:pprod_nb)=> q (pbool)(fun (x:nat)(y:pbool)=>y)) z) ((fun (q:pprod_nb)=> q (nat)(fun (x:nat)(y:pbool)=>x)) z).
+    Compute pcpl_nb 1 ptr.
+    Compute pcpl_bn ptr 1.
+    Compute pprod_nb_to_bn (pcpl_nb 1 ptr) .
+    Definition pprod :Set->Set->Set:= fun A B => forall T:Set, (A->B->T)->T.
+    Definition pcpl := fun (A:Set) (B:Set) => fun (a:A) (b:B) =>fun T:Set=>fun (k:A->B->T) =>k a b.
+    Compute pcpl_nb 1 ptr.
+    Compute pcpl nat pbool 1 ptr.
+    Compute pcpl_bn ptr 1.
+    Compute pcpl pbool nat ptr 1.
+End couples.
+End structures_de_données_couples_et_choix.
