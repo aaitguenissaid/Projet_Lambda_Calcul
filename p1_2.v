@@ -69,3 +69,34 @@ Definition cseq0 := fun (n:cnat)=> fun (x:T) (y:T)=> n (fun (z:T)=>y) x.
 Compute cseq0 c3.
 
 End type_nat.
+Section type_de_identite_polymorphe.
+Definition tid : Set := forall T: Set, T -> T.
+Definition id : tid := fun T:Set => fun x:T => x.
+Compute id bool true.
+
+Definition nbtrue1 := fun b =>
+match b with true => 1 | false => 0 end.
+Compute nbtrue1 true.
+Compute nbtrue1 false.
+Definition pbool : Set := forall T: Set, T -> T -> T.
+Definition ptr : pbool := fun T:Set => fun (x:T) (y:T) => x.
+Definition pfa : pbool := fun T:Set => fun (x:T) (y:T) => y.
+Definition pnot: pbool -> pbool := fun b: pbool => fun (T:Set)=>fun (x:T)(y:T) => b T y x.
+Compute pnot ptr.
+Definition pnotv2: pbool -> pbool := fun b => fun T : Set => b(T->T->T)(fun x y => y)(fun x y => x).
+Compute pnot ptr.
+Definition conjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T (b T x y ) y.  
+Compute conjonction pfa pfa.
+Compute conjonction pfa ptr.
+Compute conjonction ptr pfa.
+Compute conjonction ptr ptr.
+Definition disjonction: pbool -> pbool -> pbool := fun (a:pbool) (b:pbool) => fun T:Set => fun (x:T) (y:T) => a T x (b T x y ).  
+Compute disjonction pfa pfa.
+Compute disjonction pfa ptr.
+Compute disjonction ptr pfa.
+Compute disjonction ptr ptr.
+Definition pbvn: pbool -> nat := fun b => b (nat) 3  5 .
+Compute pbvn ptr.
+Compute pbvn pfa.
+
+End type_de_identite_polymorphe.
