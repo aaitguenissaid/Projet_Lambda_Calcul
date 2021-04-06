@@ -5,10 +5,13 @@
     (*1.2.1*)
     Variable T : Set. 
     Definition cbool := T -> T -> T.
+    (*booléens de Church vrai: λx y.x*)
     Definition ctr : cbool := fun x y => x.
     Print ctr.
+    (*booléens de Church faux: λx y.y*)
     Definition cfa : cbool := fun x y => y.
     Print cfa.
+    (*if b then m else n : λ b m n .b m n*)    
     Definition cif: cbool -> T ->T ->T :=fun (b : cbool) (t : T) (e : T) =>b t e.
     Variables F V : T.
     Compute cif ctr V F.

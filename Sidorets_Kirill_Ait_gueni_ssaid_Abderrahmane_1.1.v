@@ -62,14 +62,13 @@ Require Import untypedLC.
   Definition inj1 := \a b·a x. 
   (*Constructeur structure de choix apartir de deuxième élément : λ a b. b x *)
   Definition inj2 := \a b·b x.
-(* ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ??????????? ???????????
-  (*Fonction prenant en argument une donnée qui est soit un entier n (emballé par *)
-  inj1) soit un booléen b (emballé par inj2) et qui rend le double de n dans le premier cas, la négation
-  de b dans le second *)
+  (*Fonction prenant en argument une donnée qui est soit un entier n (emballé par
+  inj1) soit un booléen b (emballé par inj2) et qui rend le double de n dans le 
+  premier cas, la négation de b dans le second *)
   Definition funcinj1inj2:=\a x· a (cmult x c2) (cnot x).
   Compute show_cbn(funcinj1inj2 inj1 c2).
   Compute show_cbn(funcinj1inj2 inj2 cfa).
-  (* . La donnée optionnelle correspond à un choix entre une donnée (Some x) ou son absence (None). Elle
+  (* La donnée optionnelle correspond à un choix entre une donnée (Some x) ou son absence (None). Elle
   se représente avec une continuation à un argument et une continuation à zéro argument. Coder en
   Coq les injections Some et None, puis une fonction osucc prenant en argument un entier optionnel
   (Some n ou None) et rendant un entier optionnel qui est Some (n+1) dans le premier cas et Some 0 dans
@@ -81,18 +80,20 @@ Require Import untypedLC.
   Compute show_cbn(osucc None).
   (* 5. Prédécesseur (cpred; cpredo en bonus)*)
   (*la fonction iter qui prend un entier de Church n, une fonction g et
-un argument x et qui applique n fois la fonction g sur x. *)
+  un argument x et qui applique n fois la fonction g sur x. *)
   Definition iter := \n g x·n g x. 
   (*  la fonction cpred1 qui à partir d’un couple λk.k x y donné en
-argument rend le couple λk.k y (csucc y).*)
+  argument rend le couple λk.k y (csucc y).*)
   Definition cpred1 := \c·\k·k (snd c) (csucc(snd c)).
   Compute show_cbn(cp c1_1 c2).
   Compute show_cbn(fst (cpred1 (cp c1 c2))).
   Compute show_cbn(snd (cpred1 (cp c1 c2))).
-  (* *)
+  (* Pour définir le prédécesseur sur les entiers de Church, on utilise les couples. L’idée est d’itérer n fois une
+  fonction agissant sur des couples d’entiers. Prenons une fonction g qui à partir de (x, y) donné en argument
+  rend (y, y +1). Alors, en itérant n fois g sur (0, 0), on obtient (n −1,n) et il suffit d’extraire la première composante de ce couple. Si n est codé comme un entier de Church alors itérer n fois une fonction g sur un
+  argument a est juste (n g a).*)
   Definition cpred := \n· fst (iter n cpred1 (cp c0 c0) ).
   Compute show_cbn(cpred c3).
-  (* *)
   Definition cpred_v2 := \n· fst ( n cpred1 (cp c0 c0) ).
   Compute show_cbn(cpred_v2 c3).
   (*Definition cpredo:=\n· n osucc (\a·(ceq0 a) None Some) (\x·x) c0.
@@ -100,6 +101,6 @@ argument rend le couple λk.k y (csucc y).*)
   (*6. Factorielle*)
   (* *)
   Definition cfonc := \f n· cif (ceq0 n) c1_1 (cmult n (f f (cpred n))). 
-  (* *)
+  (*cfact(3)=1*2*3=6 *)
   Definition cfact :=\x· cfonc cfonc x.
   Compute red_cbn(cfact c3).
