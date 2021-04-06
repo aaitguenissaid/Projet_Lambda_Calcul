@@ -60,7 +60,7 @@ Section structures_de_données_couples_et_choix.
     Definition inj2 (A B: Set) : B -> psom A B := fun v => fun T:Set => fun (q:A->T)=>fun (w:B->T)=> w v.
     Compute inj1 pbool (pprod pbool pbool) pfa .
 (*     Definition toutvr : psom pbool (pprod pbool pbool) -> pbool := fun u:(psom pbool (pprod pbool pbool))=>  *)
-(*     fun T:Set =>fun q:T=>fun w:T=> u (T->T->T) q w.  *)
+(*     fun T:Set =>fun q:T=>fun w:T=> u (T->T->T) (fun x y=>q (pbool->pbool->T) x y ) w.  *)
 (*     Compute toutvr (inj1 pbool (pprod pbool pbool) ptr).*)  *)
    End choix.  
 End structures_de_données_couples_et_choix.
