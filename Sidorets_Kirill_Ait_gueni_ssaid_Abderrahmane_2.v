@@ -12,6 +12,7 @@ Section type_de_identite_polymorphe.
 End type_de_identite_polymorphe.
 (* 2.2 Booléens avec typage polymorphe *)
 Section booleens_avec_typage_polymorphe.
+  (*pbool  type de booléens de Church *)
   Definition pbool : Set := forall T: Set, T -> T -> T.
   Definition ptr : pbool := fun T:Set => fun (x:T) (y:T) => x.
   Definition pfa : pbool := fun T:Set => fun (x:T) (y:T) => y.
@@ -44,7 +45,7 @@ End booleens_avec_typage_polymorphe.
 Section structures_de_données_couples_et_choix.
   (* 2.3.1 Couples (produits de types) *)
   Section couples.
-    (*pprod_nb couple (nat,pbool)  *)
+    (*pprod_nb type de structure couple (nat,pbool)  *)
     Definition pprod_nb : Set := forall T: Set, (nat -> pbool -> T)->T.
     (*pcpl_nb constructer de couple (nat,pbool) λa b.λk:pprod_nb. k a b  *)
     Definition pcpl_nb:= fun (a:nat)(b:pbool) =>fun T:Set => fun (k:nat -> pbool -> T) =>k a b.
@@ -59,7 +60,7 @@ Section structures_de_données_couples_et_choix.
     Definition pprod_nb_to_bn := fun (z:pprod_nb)=>fun T:Set => fun (k:pbool -> nat -> T) =>
       k  ((fun (q:pprod_nb)=> q (pbool)(fun (x:nat)(y:pbool)=>y)) z) ((fun (q:pprod_nb)=> q (nat)(fun (x:nat)(y:pbool)=>x)) z).
     Compute pprod_nb_to_bn (pcpl_nb 1 ptr) .
-    (*pprod couple (type1,type2)*)
+    (*pprod type de structure  couple (type1,type2)*)
     Definition pprod :Set->Set->Set:= fun A B => forall T:Set, (A->B->T)->T.
     (*pcpl constructer de couple pprod :λa b.λk. k a b   *)
     Definition pcpl:= fun (A:Set) (B:Set) => fun (a:A) (b:B) =>fun T:Set=>fun (k:A->B->T) =>k a b.
@@ -70,7 +71,7 @@ Section structures_de_données_couples_et_choix.
   End couples.
   (* 2.3.2 Choix (sommes de types) *)
   Section choix.
-    (*pprod type de struchture de choix*)
+    (*pprod type de structure de choix*)
     Definition psom (A B: Set) : Set := forall T:Set, (A->T)->(B->T)->T.
     (*inj1 x rendent λk1k2.k1 x *)
     Definition inj1 (A B: Set) : A -> psom A B := fun u => fun T:Set => fun (q:A->T)=>fun (w:B->T)=> q u.
