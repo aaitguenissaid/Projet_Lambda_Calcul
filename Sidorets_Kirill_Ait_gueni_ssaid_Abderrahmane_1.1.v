@@ -1,6 +1,7 @@
 (*Sidorets Kirill et Ait gueni ssaid Abderrahmane*)
 Require Import untypedLC. 
 (* 1.1 λ-calcul non typé *)
+
   (* 1. Booléens (codage des constantes et des opérations de base)   *)
   (*booléens de Church vrai: λx y.x*)
   Definition ctr := \x y·x. 
@@ -20,6 +21,7 @@ Require Import untypedLC.
   Definition corp :=\a·a a.
   (*not a :λ a.a cfa ctr*)
   Definition cnot_v2 := \ a· a cfa ctr .
+
   (* 2. Entiers naturels (codage de quelques constantes, 
   des opérations successeur, addition et multiplication, et 
   du test à 0)*)
@@ -40,27 +42,32 @@ Require Import untypedLC.
   Definition cadd := \n m ·\f x · n f ( m f x).
   (* cmult (a,b)=a*b :λ n m.λ f . n (m f) *)
   Definition cmult := \n m ·\f· n( m f).
-  (* ceq0(n) = {si n =0 true sinon false}:λ n .λ x y . n (λ z.y ) x*)
+  (* ceq0(n) = {si n=c0 true sinon false}:λ n .λ x y . n (λ z.y ) x*)
   Definition ceq0 :=\n·\x y·n(\z·y) x.
+  
   (* 3. Couples*)
   (*La fonction cp prend deux arguments(a,b) et construit un couple : λa b.λk.k a b *)
   Definition cp := \ a b · \ k·k a b. 
-  (*Passées en argument à un couple, retournent premier élément : λ x y. x*)
+  (*Prends en argument un couple, retournent premier élément : λ x y. x*)
   Definition kfst := \ x y· x.
-  (*Passées en argument à un couple, retournent deuxième élément : λ x y. y*)
+  (*Prends en argument un couple, retournent deuxième élément : λ x y. y*)
   Definition ksnd := \ x y· y.
-  (*fst(c) = x ou c - une cople x - premier élément de c  : λ c. c kfst *)
+  (*fst(c) = x ou c - un couple x - premier élément de c  : λ c. c kfst *)
   Definition fst := \ x · x kfst.
   (*fst(c) = y ou c - une cople x - deuxième élément de c  : λ c. c ksnd *)
   Definition snd := \ x · x ksnd.
+
+  Compute (show_cbn (fst cp ctr cfa)).
+  Compute (show_cbn (snd cp ctr cfa)).
+
   (*ksumcoup(cp(n,m))= n+m Renvoie la somme des éléments d'une couple 
   :λx.(cadd (fst x) (snd x)) *)
   Definition ksumcoup := \x· (cadd (fst x) (snd x)).
   Compute show_cbn(ksumcoup (cp c2 c2)).
   (*4. Structure de choix (inj1, inj2, donnée optionnelle).*)
-  (*Constructeur structure de choix apartir de premier élément : λ a b. a x *)
+  (*Constructeur structure de choix a partir du premier élément : λ a b. a x *)
   Definition inj1 := \a b·a x. 
-  (*Constructeur structure de choix apartir de deuxième élément : λ a b. b x *)
+  (*Constructeur structure de choix a partir du deuxième élément : λ a b. b x *)
   Definition inj2 := \a b·b x.
   (*Fonction prenant en argument une donnée qui est soit un entier n (emballé par
   inj1) soit un booléen b (emballé par inj2) et qui rend le double de n dans le 
